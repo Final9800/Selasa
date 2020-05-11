@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Role;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\View;
 
 class RoleController extends Controller
 {
@@ -36,11 +39,19 @@ class RoleController extends Controller
      */
     public function store(Request $request)
     {
-        Role::create([
-            'name'=>$request->name,
-            'role'=>$request->role,
-            'role_id'=>$request->IdRole
+        $data = $request->validate([
+            'name'=>'max:10| required',
+            'role'=>'required',
+            'IdRole'=>'required|numeric'
+
         ]);
+
+        Role::create([
+            'name'=>$data->name,
+            'role'=>$data->role,
+            'role_id'=>$data->IdRole
+        ]);
+
         return  redirect('/addRole');
     }
 
@@ -52,7 +63,10 @@ class RoleController extends Controller
      */
     public function show(Role $role)
     {
-        //
+            if (Auth::check())
+                return Redirect::route('dashboard');
+
+            return View::make('login');
     }
 
     /**
