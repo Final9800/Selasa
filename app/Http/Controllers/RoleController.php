@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\View;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\File;
 
 class RoleController extends Controller
 {
@@ -112,5 +114,39 @@ class RoleController extends Controller
     public function destroy(Role $role)
     {
         //
+    }
+    public function storeImage(Request $request){
+        if ($request->hasFile('coverBook')) {
+            $images = $request->coverBook->getClientOriginalName();
+            $images = time().'_'.$images; // Add current time before image name
+            $request->coverBook->storeAs('cover',$images);
+        $data = $request->only('judul', 'author');
+        $path = $request->file('coverBook')->store('cover');
+        // dd($path);
+        Role::create([
+            'name' => $data['judul'],
+            'author' => $data['author'],
+            'cover' => $path,
+        ]);
+
+
+    //     $cover = $request->file('coverBook');
+    // $extension = $cover->getClientOriginalExtension();
+    // Storage::disk('public')->put($cover->getFilename().'.'.$extension,  File::get($cover));
+
+    // $book = new Role();
+    // $book->name = $request->name;
+    // $book->author = $request->author;
+    // $book->mime = $cover->getClientMimeType();
+    // $book->original_filename = $cover->getClientOriginalName();
+    // $book->filename = $cover->getFilename().'.'.$extension;
+    // $book->save();
+
+        return redirect('/book');
+    }
+    public function viewImage(){
+        $books = Role::all();
+        // dd($books);
+        return view('library',compact('books'));
     }
 }

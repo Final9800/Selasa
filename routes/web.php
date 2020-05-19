@@ -16,7 +16,8 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
-
+Route::get('/book', 'RoleController@viewImage');
+route::post('/addbook','RoleController@storeImage')->name('addBook');
 Route::get('/addRole','RoleController@index')->middleware('auth');
 route::get('/about',function(){
     return view('about');
@@ -31,6 +32,3 @@ Route::post('login', [ 'as' => 'login', 'uses' => 'LoginController@show']);
 Route::get('/home', 'HomeController@index')->name('home');
 
 
-Auth::routes();
-
-Route::get('/home', 'HomeController@index')->name('home');
